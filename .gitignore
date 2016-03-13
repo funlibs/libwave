@@ -2,5 +2,5 @@
 *.swo
 *.swp
 /.kdev4
-/cglm.kdev4
+/*.kdev4
 /Makefile
