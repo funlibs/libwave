@@ -99,7 +99,7 @@ typedef struct riff_head_t
     uint32_t cksize;                 // Chunk size: 40(cbSize=22), 18(cbSize=0), 16(no cbSize)
 
 } RIFF_HEAD;
-typedef struct fmt_chunk_t {
+typedef struct fmt_chunk_t { // max size 40
 
     uint16_t    wFormatTag;         // Format code (WAVE_FORMAT_*)
     uint16_t    nChannels;          // Number of interleaved channels
@@ -261,7 +261,11 @@ CWAVE_DATA* cwaveOpen(char* fileName)
         printf("Not an format header\n");
         return NULL;
     }
+
     int fmtSize = fmt_chunk_head.cksize;
+
+    // max size of FMT_CHUNK
+    if (fmtSize > 40) return NULL;
 
     // read format options
     FMT_CHUNK fmt_chunk = {0,0,0,0,0,0,0,0,0,{0,""}};
