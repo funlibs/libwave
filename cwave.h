@@ -20,12 +20,14 @@
 
 typedef struct cwave_info_t {
 
+    // format
     uint16_t nChannels;
     uint32_t nSamplesPerSec;
     uint32_t nAvgBytesPerSec;
     uint16_t nBlockAlign;
     uint16_t wBitsPerSample;
 
+    // extention
     uint16_t wValidBitsPerSample;
     uint32_t dwChannelMask;
 

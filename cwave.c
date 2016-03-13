@@ -29,40 +29,6 @@
 
 
 /*
- * See doc_waveMultiChan.pdf for more on this
- */
-#define SPEAKER_FRONT_LEFT             0x1
-#define SPEAKER_FRONT_RIGHT            0x2
-#define SPEAKER_FRONT_CENTER           0x4
-#define SPEAKER_LOW_FREQUENCY          0x8
-#define SPEAKER_BACK_LEFT              0x10
-#define SPEAKER_BACK_RIGHT             0x20
-#define SPEAKER_FRONT_LEFT_OF_CENTER   0x40
-#define SPEAKER_FRONT_RIGHT_OF_CENTER  0x80
-#define SPEAKER_BACK_CENTER            0x100
-#define SPEAKER_SIDE_LEFT              0x200
-#define SPEAKER_SIDE_RIGHT             0x400
-#define SPEAKER_TOP_CENTER             0x800
-#define SPEAKER_TOP_FRONT_LEFT         0x1000
-#define SPEAKER_TOP_FRONT_CENTER       0x2000
-#define SPEAKER_TOP_FRONT_RIGHT        0x4000
-#define SPEAKER_TOP_BACK_LEFT          0x8000
-#define SPEAKER_TOP_BACK_CENTER        0x10000
-#define SPEAKER_TOP_BACK_RIGHT         0x20000
-#define SPEAKER_RESERVED               0x8000000
-
-/*
- * The standard format codes for waveform data
- */
-const uint16_t WAVE_FORMAT_PCM        = 0x0001; // PCM
-const uint16_t WAVE_FORMAT_IEEE_FLOAT = 0x0003; // IEEE float
-const uint16_t WAVE_FORMAT_ALAW       = 0x0006; // 8-bit ITU-T G.711 A-law
-const uint16_t WAVE_FORMAT_MULAW      = 0x0007; // 8-bit ITU-T G.711 µ-law
-const uint16_t WAVE_FORMAT_EXTENSIBLE = 0xFFFE; // Determined by SubFormat
-
-
-
-/*
  * Wave files have a master RIFF chunk which includes a WAVE identifier
  * followed by sub-chunks. The data is stored in little-endian byte order.
  */
@@ -114,6 +80,32 @@ typedef struct fmt_chunk_t { // max size 40
 
 } FMT_CHUNK;
 
+void cwaveDebugFmt(FMT_CHUNK fmt_chunk)
+{
+
+    printf("\n\n");
+    printf("wFormatTag is:          %10x\n", fmt_chunk.wFormatTag);
+    printf("nChannels is:           %10d\n", fmt_chunk.nChannels);
+    printf("nSamplesPerSec is:      %10d\n", fmt_chunk.nSamplesPerSec);
+
+    printf("nAvgBytesPerSec is:     %10d\n", fmt_chunk.nAvgBytesPerSec);
+    printf("nBlockAlign is:         %10d\n", fmt_chunk.nBlockAlign);
+    printf("wBitsPerSample is:      %10d\n", fmt_chunk.wBitsPerSample);
+
+    if (fmt_chunk.cbSize != 0) {
+
+        printf("\nHave extention!\n");
+        printf("wValidBitsPerSample is: %10d\n", fmt_chunk.wValidBitsPerSample);
+        printf("dwChannelMask is:       %10d\n", fmt_chunk.dwChannelMask);
+        printf("SubFormat GUID is:      %10x %s \n",
+               fmt_chunk.SubFormat.formatCode,
+               fmt_chunk.SubFormat.fixedString);
+
+    }
+
+    printf("\n\n");
+
+}
 
 /*
  * PCM Format
@@ -209,7 +201,40 @@ typedef struct fmt_chunk_t { // max size 40
  */
 
 
-void cwaveDebugFmt(FMT_CHUNK chunk);
+/*
+ * See doc_waveMultiChan.pdf for more on this
+ */
+#define SPEAKER_FRONT_LEFT             0x1
+#define SPEAKER_FRONT_RIGHT            0x2
+#define SPEAKER_FRONT_CENTER           0x4
+#define SPEAKER_LOW_FREQUENCY          0x8
+#define SPEAKER_BACK_LEFT              0x10
+#define SPEAKER_BACK_RIGHT             0x20
+#define SPEAKER_FRONT_LEFT_OF_CENTER   0x40
+#define SPEAKER_FRONT_RIGHT_OF_CENTER  0x80
+#define SPEAKER_BACK_CENTER            0x100
+#define SPEAKER_SIDE_LEFT              0x200
+#define SPEAKER_SIDE_RIGHT             0x400
+#define SPEAKER_TOP_CENTER             0x800
+#define SPEAKER_TOP_FRONT_LEFT         0x1000
+#define SPEAKER_TOP_FRONT_CENTER       0x2000
+#define SPEAKER_TOP_FRONT_RIGHT        0x4000
+#define SPEAKER_TOP_BACK_LEFT          0x8000
+#define SPEAKER_TOP_BACK_CENTER        0x10000
+#define SPEAKER_TOP_BACK_RIGHT         0x20000
+#define SPEAKER_RESERVED               0x8000000
+
+
+/*
+ * The standard format codes for waveform data
+ */
+const uint16_t WAVE_FORMAT_PCM        = 0x0001; // PCM
+const uint16_t WAVE_FORMAT_IEEE_FLOAT = 0x0003; // IEEE float
+const uint16_t WAVE_FORMAT_ALAW       = 0x0006; // 8-bit ITU-T G.711 A-law
+const uint16_t WAVE_FORMAT_MULAW      = 0x0007; // 8-bit ITU-T G.711 µ-law
+const uint16_t WAVE_FORMAT_EXTENSIBLE = 0xFFFE; // Determined by SubFormat
+
+
 
 void* cwaveOpen(char* fileName, CWAVE_INFO* info)
 {
@@ -218,22 +243,32 @@ void* cwaveOpen(char* fileName, CWAVE_INFO* info)
     FILE *wavFile = fopen(fileName, "r");
 
     if (!wavFile) {
+
         printf("Open file failed\n");
         return NULL;
+
     }
 
 
     // try to read the master header
+
     MASTER_WAVE_CHUNK wave_chunk;
+
     if (fread(&wave_chunk, sizeof(MASTER_WAVE_CHUNK), 1, wavFile) < 1) {
+
         printf("Can not read wave chunk\n");
         return NULL;
+
     }
 
+
     // check indianness consistancy
+
     volatile uint32_t i = 0x01234567;
     int isLittleIndian = (*((uint8_t*)(&i))) == 0x67;
+
     if (isLittleIndian) {
+
         if (
             memcmp(wave_chunk.ckID, "XFIR", 4) == 0 ||
             memcmp(wave_chunk.ckID, "FFIR", 4) == 0)
@@ -241,7 +276,9 @@ void* cwaveOpen(char* fileName, CWAVE_INFO* info)
             printf("Indianness of the file does not match the system one");
             return NULL;
         }
+
     } else {
+
         if (
             memcmp(wave_chunk.ckID, "RIFX", 4) == 0 ||
             memcmp(wave_chunk.ckID, "RIFF", 4) == 0)
@@ -249,39 +286,67 @@ void* cwaveOpen(char* fileName, CWAVE_INFO* info)
             printf("Indianness of the file does not match the system one");
             return NULL;
         }
+
     }
+
 
     // read the format chunk and get content lenght
+ 
     RIFF_HEAD fmt_chunk_head;
+
     if (fread(&fmt_chunk_head, sizeof(RIFF_HEAD), 1, wavFile) < 1) {
+
         printf("Can not read format header chunk\n");
         return NULL;
+
     }
+
+
     if (memcmp(fmt_chunk_head.ckID, "fmt ", 4) != 0) {
+
         printf("Not an format header\n");
         return NULL;
+
     }
 
-    int fmtSize = fmt_chunk_head.cksize;
 
+    int fmtSize = fmt_chunk_head.cksize;
     // max size of FMT_CHUNK
     if (fmtSize > 40) return NULL;
 
+
     // read format options
+
     FMT_CHUNK fmt_chunk = {0,0,0,0,0,0,0,0,0,{0,""}};
+
     if (fread(&fmt_chunk, fmtSize, 1, wavFile) < 1) {
+
         printf("Can not read format chunk\n");
         return NULL;
+
     }
 
+
     if (fmt_chunk.wFormatTag != WAVE_FORMAT_PCM) {
+
         if (fmt_chunk.cbSize != 0) {
+
             if (fmt_chunk.SubFormat.formatCode != WAVE_FORMAT_PCM) {
+
                 printf ("It is not PCM data\n");
                 return NULL;
+
             }
+
+        } else {
+            
+                printf ("It is not PCM data\n");
+                return NULL;
+
         }
+
     }
+
 
     /*
      * TODO read dwChannelMask to know wich channel go with wich speaker.
@@ -292,34 +357,46 @@ void* cwaveOpen(char* fileName, CWAVE_INFO* info)
 
     uint16_t expectedConfigForStereo = SPEAKER_FRONT_LEFT | SPEAKER_FRONT_RIGHT;
 
+
     cwaveDebugFmt(fmt_chunk);
 
+
     RIFF_HEAD data_chunk = {"", 0};
+
     if (fread(&data_chunk, sizeof(RIFF_HEAD), 1, wavFile) < 1) {
-        printf ("Can not read the data chunk: %s\n", data_chunk.ckID);
+
+        printf ("Can not read the data chunk\n");
         return NULL;
+
     }
 
     if (memcmp(data_chunk.ckID, "data", 4) != 0) {
-        printf ("It is not a data chunk: %s\n", data_chunk.ckID);
+
+        printf ("It is not a data chunk: %.4s\n", data_chunk.ckID);
         return NULL;
+
     }
+
 
 
     // I should be able to fill channel buffers with this:
-    int dataSize     = data_chunk.cksize;
-    int sampleLen       = fmt_chunk.wBitsPerSample / 8;
-    int channelNum      = fmt_chunk.nChannels;
+    int dataSize   = data_chunk.cksize;
+    int sampleLen  = fmt_chunk.wBitsPerSample / 8;
+    int channelNum = fmt_chunk.nChannels;
+
     printf("%d octets divided in %d octets sample lenght for %d channel\n",
            dataSize, sampleLen, channelNum);
 
-    char *wavData = calloc(dataSize, sizeof(char));
-    int haveRead = fread(wavData, 1, (size_t) dataSize, wavFile);
-    if (haveRead < dataSize) {
+
+    // in memory buffer
+    char*   wavData  = calloc(dataSize, sizeof(char));
+    int     haveRead = fread(wavData, 1, (size_t) dataSize, wavFile);
+
+    if (haveRead < dataSize)
         printf("warning unexpected end of file %d %s\n", haveRead, wavData);
-    } else {
+    else
         printf("Read file success\n");
-    }
+
 
     fclose(wavFile);
 
@@ -336,28 +413,4 @@ void* cwaveOpen(char* fileName, CWAVE_INFO* info)
 
 }
 
-
-void cwaveDebugFmt(FMT_CHUNK fmt_chunk)
-{
-
-    // print format options
-    printf("\n\n");
-    printf("wFormatTag is:          %10x\n", fmt_chunk.wFormatTag);
-    printf("nChannels is:           %10d\n", fmt_chunk.nChannels);
-    printf("nSamplesPerSec is:      %10d\n", fmt_chunk.nSamplesPerSec);
-
-    printf("nAvgBytesPerSec is:     %10d\n", fmt_chunk.nAvgBytesPerSec);
-    printf("nBlockAlign is:         %10d\n", fmt_chunk.nBlockAlign);
-    printf("wBitsPerSample is:      %10d\n", fmt_chunk.wBitsPerSample);
-    if (fmt_chunk.cbSize != 0) {
-        printf("\nHave extention!\n");
-        printf("wValidBitsPerSample is: %10d\n", fmt_chunk.wValidBitsPerSample);
-        printf("dwChannelMask is:       %10d\n", fmt_chunk.dwChannelMask);
-        printf("SubFormat GUID is:      %10x %s \n",
-               fmt_chunk.SubFormat.formatCode,
-               fmt_chunk.SubFormat.fixedString);
-    }
-
-    printf("\n\n");
-}
 

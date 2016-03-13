@@ -27,19 +27,48 @@ int main(int argc, char* argv[])
 
     if (argc < 3) exit(1);
 
-    int shouldFail = strncmp(argv[2], "fail", 4);
 
     CWAVE_INFO info;
     void* data = cwaveOpen(argv[1], &info);
 
-    if (data == NULL && shouldFail != 0) {
-        printf("Read wav file status: failure\n");
-        return 1;
+
+    int returnStatus;
+
+    // if test must fail
+    if (strncmp(argv[2], "fail", 4) == 0) {
+
+        // test must fail
+        if (data == NULL) { // NULL is ok
+
+            returnStatus = 0;
+
+        } else {
+
+            free(data);
+            returnStatus = 1;
+
+        }
+
+    } else {
+
+        // test must succeed
+        if (data == NULL) { // NULL is not ok
+
+            returnStatus = 1;
+
+        } else {
+
+            free(data);
+            returnStatus = 0;
+
+        }
+
     }
 
+
     printf("Read wav file status: success %d\n",info.nChannels);
-    free(data);
-    return 0;
+
+    return returnStatus;
 
 }
 
