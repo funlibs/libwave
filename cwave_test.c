@@ -14,17 +14,20 @@ int main(int argc, char* argv[])
 
     int shouldFail = strncmp(argv[2], "fail", 4);
 
-    void *buffer = cwaveOpen(argv[1]);
+    CWAVE_DATA* data = cwaveOpen(argv[1]);
 
-    if (buffer == NULL && shouldFail != 0) {
-
-        printf("Read wav file status: failure\n");
-        return 1;
-
+    if (data == NULL) {
+        if (shouldFail != 0) {
+            printf("Read wav file status: failure\n");
+            return 1;
+        } else {
+            printf("Read wav file status: success\n");
+            return 0;
+        }
     }
 
     printf("Read wav file status: success\n");
-    free(buffer);
+    cwaveFree(data);
     return 0;
 
 }

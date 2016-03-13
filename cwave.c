@@ -1,3 +1,4 @@
+#include "cwave.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -37,11 +38,11 @@
 /*
  * The standard format codes for waveform data
  */
-const int16_t WAVE_FORMAT_PCM        = 0x0001; // PCM
-const int16_t WAVE_FORMAT_IEEE_FLOAT = 0x0003; // IEEE float
-const int16_t WAVE_FORMAT_ALAW       = 0x0006; // 8-bit ITU-T G.711 A-law
-const int16_t WAVE_FORMAT_MULAW      = 0x0007; // 8-bit ITU-T G.711 µ-law
-const int16_t WAVE_FORMAT_EXTENSIBLE = 0xFFFE; // Determined by SubFormat
+const uint16_t WAVE_FORMAT_PCM        = 0x0001; // PCM
+const uint16_t WAVE_FORMAT_IEEE_FLOAT = 0x0003; // IEEE float
+const uint16_t WAVE_FORMAT_ALAW       = 0x0006; // 8-bit ITU-T G.711 A-law
+const uint16_t WAVE_FORMAT_MULAW      = 0x0007; // 8-bit ITU-T G.711 µ-law
+const uint16_t WAVE_FORMAT_EXTENSIBLE = 0xFFFE; // Determined by SubFormat
 
 
 
@@ -53,7 +54,7 @@ typedef struct master_wave_chunk_t
 {
 
     char    ckID[4];        // Chunk ID: "RIFF"
-    int32_t cksize;         // Chunk size: 4 + n
+    uint32_t cksize;        // Chunk size: 4 + n
 
     char        WAVEID[4];  // WAVE ID: "WAVE"
     //FMT_CHUNK* c[n]; Wave chunks containing format information and sampled data
@@ -65,8 +66,8 @@ typedef struct master_wave_chunk_t
  * GUID type util
  */
 typedef struct guid_t {
-    int16_t formatCode;
-    char    fixedString[14];
+    uint16_t formatCode;
+    char     fixedString[14];
 } GUID;
 
 
@@ -78,21 +79,21 @@ typedef struct guid_t {
 typedef struct riff_head_t
 {
 
-    char    ckID[4];                // Chunk ID: "fmt "
-    int32_t cksize;                 // Chunk size: 40(cbSize=22), 18(cbSize=0), 16(no cbSize)
+    char     ckID[4];                // Chunk ID: "fmt "
+    uint32_t cksize;                 // Chunk size: 40(cbSize=22), 18(cbSize=0), 16(no cbSize)
 
 } RIFF_HEAD;
 typedef struct fmt_chunk_t {
 
-    int16_t     wFormatTag;         // Format code (WAVE_FORMAT_*)
-    int16_t     nChannels;          // Number of interleaved channels
-    int32_t     nSamplesPerSec;     // Sampling rate (blocks per second)
-    int32_t     nAvgBytesPerSec;    // Data rate
-    int16_t     nBlockAlign;        // Data block size (bytes)
-    int16_t     wBitsPerSample;     // Bits per sample
-    int16_t     cbSize;             // Size of the extension (0 or 22)
-    int16_t     wValidBitsPerSample;// Number of valid bits
-    int32_t     dwChannelMask;      // Speaker position mask
+    uint16_t    wFormatTag;         // Format code (WAVE_FORMAT_*)
+    uint16_t    nChannels;          // Number of interleaved channels
+    uint32_t    nSamplesPerSec;     // Sampling rate (blocks per second)
+    uint32_t    nAvgBytesPerSec;    // Data rate
+    uint16_t    nBlockAlign;        // Data block size (bytes)
+    uint16_t    wBitsPerSample;     // Bits per sample
+    uint16_t    cbSize;             // Size of the extension (0 or 22)
+    uint16_t    wValidBitsPerSample;// Number of valid bits
+    uint32_t    dwChannelMask;      // Speaker position mask
     GUID        SubFormat;          // GUID, including the data format code
 
 } FMT_CHUNK;
@@ -104,19 +105,20 @@ typedef struct fmt_chunk_t {
  * The first part of the Format chunk is used to describe PCM data
  *
  * - For PCM data, the Format chunk in the header declares the number of
- * bits/sample in each sample (wBitsPerSample). The original documentation
- * (Revision 1) specified that the number of bits per sample is to be rounded
- * up to the next multiple of 8 bits. This rounded-up value is the container
- * size. This information is redundant in that the container size (in bytes)
- * for each sample can also be determined from the block size divided by the
- * number of channels (nBlockAlign / nChannels).
+ *   bits/sample in each sample (wBitsPerSample). The original documentation
+ *   (Revision 1) specified that the number of bits per sample is to be rounded
+ *   up to the next multiple of 8 bits. This rounded-up value is the container
+ *   size. This information is redundant in that the container size (in bytes)
+ *   for each sample can also be determined from the block size divided by the
+ *   number of channels (nBlockAlign / nChannels).
  *    - This redundancy has been appropriated to define new formats. For instance,
  *      Cool Edit uses a format which declares a sample size of 24 bits together
  *      with a container size of 4 bytes (32 bits) determined from the block size
  *      and number of channels. With this combination, the data is actually stored
  *      as 32-bit IEEE floats. The normalization (full scale 223) is however
  *      different from the standard float format.
- * - PCM data is two's-complement except for resolutions of 1-8 bits, which are represented as offset binary.
+ * - PCM data is two's-complement except for resolutions of 1-8 bits, which
+ *   are represented as offset binary.
  */
 
 /*
@@ -130,21 +132,21 @@ typedef struct fmt_chunk_t {
  * unique identifier (GUID).
  *
  * - With the WAVE_FORMAT_EXTENSIBLE format, the original bits/sample field
- * (wBitsPerSample) must match the container size (8 * nBlockAlign / nChannels).
- * This means that wBitsPerSample must be a multiple of 8. Reduced precision
- * within the container size is now specified by wValidBitsPerSample.
+ *   (wBitsPerSample) must match the container size (8 * nBlockAlign / nChannels).
+ *   This means that wBitsPerSample must be a multiple of 8. Reduced precision
+ *   within the container size is now specified by wValidBitsPerSample.
  * - The number of valid bits (wValidBitsPerSample) is informational only. The
- * data is correctly represented in the precision of the container size. The
- * number of valid bits can be any value from 1 to the container size in bits.
+ *   data is correctly represented in the precision of the container size. The
+ *   number of valid bits can be any value from 1 to the container size in bits.
  * - The loudspeaker position mask uses 18 bits, each bit corresponding to a
- * speaker position (e.g. Front Left or Top Back Right), to indicate the
- * channel to speaker mapping. More details are in the document cited above.
- * This field is informational. An all-zero field indicates that channels are
- * mapped to outputs in order: first channel to first output, second channel
- * to second output, etc.
+ *   speaker position (e.g. Front Left or Top Back Right), to indicate the
+ *   channel to speaker mapping. More details are in the document cited above.
+ *   This field is informational. An all-zero field indicates that channels are
+ *   mapped to outputs in order: first channel to first output, second channel
+ *   to second output, etc.
  * - The first two bytes of the GUID form the sub-code specifying the data
- * format code, e.g. WAVE_FORMAT_PCM. The remaining 14 bytes contain a fixed
- * string, "\x00\x00\x00\x00\x10\x00\x80\x00\x00\xAA\x00\x38\x9B\x71".
+ *   format code, e.g. WAVE_FORMAT_PCM. The remaining 14 bytes contain a fixed
+ *   string, "\x00\x00\x00\x00\x10\x00\x80\x00\x00\xAA\x00\x38\x9B\x71".
  *
  * The WAVE_FORMAT_EXTENSIBLE format should be used whenever:
  *
@@ -193,7 +195,7 @@ typedef struct fmt_chunk_t {
 
 void cwaveDebugFmt(FMT_CHUNK chunk);
 
-void* cwaveOpen(char* fileName)
+CWAVE_DATA* cwaveOpen(char* fileName)
 {
 
     // try to open the file
@@ -264,11 +266,11 @@ void* cwaveOpen(char* fileName)
     /*
      * TODO read dwChannelMask to know wich channel go with wich speaker.
      */
-    int16_t expectedConfigForSurround =
+    uint16_t expectedConfigForSurround =
         SPEAKER_FRONT_LEFT | SPEAKER_FRONT_RIGHT | SPEAKER_FRONT_CENTER |
         SPEAKER_BACK_CENTER;
 
-    int16_t expectedConfigForStereo = SPEAKER_FRONT_LEFT | SPEAKER_FRONT_RIGHT;
+    uint16_t expectedConfigForStereo = SPEAKER_FRONT_LEFT | SPEAKER_FRONT_RIGHT;
 
     cwaveDebugFmt(fmt_chunk);
 
@@ -301,7 +303,27 @@ void* cwaveOpen(char* fileName)
 
     fclose(wavFile);
 
-    return wavData;
+    CWAVE_DATA *cwaveData = calloc(1, sizeof(CWAVE_DATA));
+    cwaveData->nChannels            = fmt_chunk.nChannels;
+    cwaveData->nSamplesPerSec       = fmt_chunk.nSamplesPerSec;
+    cwaveData->nAvgBytesPerSec      = fmt_chunk.nAvgBytesPerSec;
+    cwaveData->nBlockAlign          = fmt_chunk.nBlockAlign;
+    cwaveData->wBitsPerSample       = fmt_chunk.wBitsPerSample;
+    cwaveData->wValidBitsPerSample  = fmt_chunk.wValidBitsPerSample;
+    cwaveData->dwChannelMask        = fmt_chunk.dwChannelMask;
+    cwaveData->dataSize             = dataSize;
+    cwaveData->data                 = wavData;
+
+    return cwaveData;
+
+}
+
+void cwaveFree(CWAVE_DATA* cwaveData)
+{
+
+    if (cwaveData == NULL) return;
+    if (cwaveData->data != NULL) free(cwaveData->data);
+    free(cwaveData);
 
 }
 
