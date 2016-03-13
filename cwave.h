@@ -18,7 +18,7 @@
 
 #include <inttypes.h>
 
-typedef struct cwave_data_t {
+typedef struct cwave_info_t {
 
     uint16_t nChannels;
     uint32_t nSamplesPerSec;
@@ -26,20 +26,15 @@ typedef struct cwave_data_t {
     uint16_t nBlockAlign;
     uint16_t wBitsPerSample;
 
-    // extentions
     uint16_t wValidBitsPerSample;
     uint32_t dwChannelMask;
 
-    // samples
-    char*    data;
     int      dataSize;
 
-} CWAVE_DATA;
+} CWAVE_INFO;
 
 
-CWAVE_DATA* cwaveOpen(char* fileName);
-
-void cwaveFree(CWAVE_DATA* data);
+void* cwaveOpen(char* fileName, CWAVE_INFO* info);
 
 #endif
 

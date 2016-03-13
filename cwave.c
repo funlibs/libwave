@@ -211,7 +211,7 @@ typedef struct fmt_chunk_t { // max size 40
 
 void cwaveDebugFmt(FMT_CHUNK chunk);
 
-CWAVE_DATA* cwaveOpen(char* fileName)
+void* cwaveOpen(char* fileName, CWAVE_INFO* info)
 {
 
     // try to open the file
@@ -323,29 +323,19 @@ CWAVE_DATA* cwaveOpen(char* fileName)
 
     fclose(wavFile);
 
-    CWAVE_DATA *cwaveData = calloc(1, sizeof(CWAVE_DATA));
-    cwaveData->nChannels            = fmt_chunk.nChannels;
-    cwaveData->nSamplesPerSec       = fmt_chunk.nSamplesPerSec;
-    cwaveData->nAvgBytesPerSec      = fmt_chunk.nAvgBytesPerSec;
-    cwaveData->nBlockAlign          = fmt_chunk.nBlockAlign;
-    cwaveData->wBitsPerSample       = fmt_chunk.wBitsPerSample;
-    cwaveData->wValidBitsPerSample  = fmt_chunk.wValidBitsPerSample;
-    cwaveData->dwChannelMask        = fmt_chunk.dwChannelMask;
-    cwaveData->dataSize             = dataSize;
-    cwaveData->data                 = wavData;
+    info->nChannels            = fmt_chunk.nChannels;
+    info->nSamplesPerSec       = fmt_chunk.nSamplesPerSec;
+    info->nAvgBytesPerSec      = fmt_chunk.nAvgBytesPerSec;
+    info->nBlockAlign          = fmt_chunk.nBlockAlign;
+    info->wBitsPerSample       = fmt_chunk.wBitsPerSample;
+    info->wValidBitsPerSample  = fmt_chunk.wValidBitsPerSample;
+    info->dwChannelMask        = fmt_chunk.dwChannelMask;
+    info->dataSize             = dataSize;
 
-    return cwaveData;
+    return wavData;
 
 }
 
-void cwaveFree(CWAVE_DATA* cwaveData)
-{
-
-    if (cwaveData == NULL) return;
-    if (cwaveData->data != NULL) free(cwaveData->data);
-    free(cwaveData);
-
-}
 
 void cwaveDebugFmt(FMT_CHUNK fmt_chunk)
 {

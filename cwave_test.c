@@ -29,20 +29,16 @@ int main(int argc, char* argv[])
 
     int shouldFail = strncmp(argv[2], "fail", 4);
 
-    CWAVE_DATA* data = cwaveOpen(argv[1]);
+    CWAVE_INFO info;
+    void* data = cwaveOpen(argv[1], &info);
 
-    if (data == NULL) {
-        if (shouldFail != 0) {
-            printf("Read wav file status: failure\n");
-            return 1;
-        } else {
-            printf("Read wav file status: success\n");
-            return 0;
-        }
+    if (data == NULL && shouldFail != 0) {
+        printf("Read wav file status: failure\n");
+        return 1;
     }
 
-    printf("Read wav file status: success\n");
-    cwaveFree(data);
+    printf("Read wav file status: success %d\n",info.nChannels);
+    free(data);
     return 0;
 
 }
