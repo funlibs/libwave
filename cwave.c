@@ -215,8 +215,6 @@ void* cwaveOpen(char* fileName)
     // check indianness consistancy
     volatile uint32_t i = 0x01234567;
     int isLittleIndian = (*((uint8_t*)(&i))) == 0x67;
-
-    int indiannessTest;
     if (isLittleIndian) {
         if (
             memcmp(wave_chunk.ckID, "XFIR", 4) == 0 ||
@@ -287,14 +285,14 @@ void* cwaveOpen(char* fileName)
 
 
     // I should be able to fill channel buffers with this:
-    int dataSize        = data_chunk.cksize;
+    int dataSize     = data_chunk.cksize;
     int sampleLen       = fmt_chunk.wBitsPerSample / 8;
     int channelNum      = fmt_chunk.nChannels;
     printf("%d octets divided in %d octets sample lenght for %d channel\n",
            dataSize, sampleLen, channelNum);
 
     char *wavData = calloc(dataSize, sizeof(char));
-    int haveRead = fread(wavData, 1, dataSize, wavFile);
+    int haveRead = fread(wavData, 1, (size_t) dataSize, wavFile);
     if (haveRead < dataSize) {
         printf("warning unexpected end of file %d %s\n", haveRead, wavData);
     } else {

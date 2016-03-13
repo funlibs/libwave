@@ -1,6 +1,8 @@
 cmake_minimum_required (VERSION 2.6)
 project (CWAVE)
 
+add_definitions (-D_CRT_SECURE_NO_WARNINGS)
+
 include_directories (.)
 
 add_library (cwave cwave.c cwave.h)
