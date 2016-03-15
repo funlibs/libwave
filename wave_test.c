@@ -29,10 +29,10 @@ int main(int argc, char* argv[])
 
 
     WAVE_INFO info;
-    void* data = waveOpen(argv[1], &info);
+    void* data = waveLoad(argv[1], &info);
 
 
-    int returnStatus;
+    int return_status;
 
     // if test must fail
     if (strncmp(argv[2], "fail", 4) == 0) {
@@ -40,12 +40,12 @@ int main(int argc, char* argv[])
         // test must fail
         if (data == NULL) { // NULL is ok
 
-            returnStatus = 0;
+            return_status = 0;
 
         } else {
 
             free(data);
-            returnStatus = 1;
+            return_status = 1;
 
         }
 
@@ -54,21 +54,21 @@ int main(int argc, char* argv[])
         // test must succeed
         if (data == NULL) { // NULL is not ok
 
-            returnStatus = 1;
+            return_status = 1;
 
         } else {
 
             free(data);
-            returnStatus = 0;
+            return_status = 0;
 
         }
 
     }
 
 
-    printf("Read wav file status: success %d\n",info.nChannels);
+    printf("Read wav file status: success %d\n", info.nChannels);
 
-    return returnStatus;
+    return return_status;
 
 }
 

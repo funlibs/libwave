@@ -36,7 +36,7 @@ typedef struct {
 } WAVE_INFO;
 
 
-void* waveOpen(char* fileName, WAVE_INFO* info);
+void* waveLoad(char* fileName, WAVE_INFO* info);
 
 #endif
 

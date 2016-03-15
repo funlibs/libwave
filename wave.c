@@ -235,14 +235,13 @@ const uint16_t WAVE_FORMAT_MULAW      = 0x0007; // 8-bit ITU-T G.711 µ-law
 const uint16_t WAVE_FORMAT_EXTENSIBLE = 0xFFFE; // Determined by SubFormat
 
 
-
-void* waveOpen(char* fileName, WAVE_INFO* info)
+void* waveLoad(char* fileName, WAVE_INFO* info)
 {
 
     // try to open the file
-    FILE *wavFile = fopen(fileName, "r");
+    FILE *wave_file = fopen(fileName, "r");
 
-    if (!wavFile) {
+    if (!wave_file) {
 
         printf("Open file failed\n");
         return NULL;
@@ -251,10 +250,9 @@ void* waveOpen(char* fileName, WAVE_INFO* info)
 
 
     // try to read the master header
-
     MASTER_WAVE_CHUNK wave_chunk;
 
-    if (fread(&wave_chunk, sizeof(MASTER_WAVE_CHUNK), 1, wavFile) < 1) {
+    if (fread(&wave_chunk, sizeof(MASTER_WAVE_CHUNK), 1, wave_file) < 1) {
 
         printf("Can not read wave chunk\n");
         return NULL;
@@ -263,7 +261,6 @@ void* waveOpen(char* fileName, WAVE_INFO* info)
 
 
     // check indianness consistancy
-
     volatile uint32_t i = 0x01234567;
     int isLittleIndian = (*((uint8_t*)(&i))) == 0x67;
 
@@ -291,10 +288,9 @@ void* waveOpen(char* fileName, WAVE_INFO* info)
 
 
     // read the format chunk and get content lenght
- 
     RIFF_HEAD fmt_chunk_head;
 
-    if (fread(&fmt_chunk_head, sizeof(RIFF_HEAD), 1, wavFile) < 1) {
+    if (fread(&fmt_chunk_head, sizeof(RIFF_HEAD), 1, wave_file) < 1) {
 
         printf("Can not read format header chunk\n");
         return NULL;
@@ -316,10 +312,9 @@ void* waveOpen(char* fileName, WAVE_INFO* info)
 
 
     // read format options
-
     FMT_CHUNK fmt_chunk = {0,0,0,0,0,0,0,0,0,{0,""}};
 
-    if (fread(&fmt_chunk, fmtSize, 1, wavFile) < 1) {
+    if (fread(&fmt_chunk, fmtSize, 1, wave_file) < 1) {
 
         printf("Can not read format chunk\n");
         return NULL;
@@ -327,6 +322,7 @@ void* waveOpen(char* fileName, WAVE_INFO* info)
     }
 
 
+    // only accept PCM
     if (fmt_chunk.wFormatTag != WAVE_FORMAT_PCM) {
 
         if (fmt_chunk.cbSize != 0) {
@@ -348,22 +344,19 @@ void* waveOpen(char* fileName, WAVE_INFO* info)
     }
 
 
-    /*
-     * TODO read dwChannelMask to know wich channel go with wich speaker.
-     */
+    // TODO read dwChannelMask to know wich channel go with wich speaker.
     uint16_t expectedConfigForSurround =
         SPEAKER_FRONT_LEFT | SPEAKER_FRONT_RIGHT | SPEAKER_FRONT_CENTER |
         SPEAKER_BACK_CENTER;
 
     uint16_t expectedConfigForStereo = SPEAKER_FRONT_LEFT | SPEAKER_FRONT_RIGHT;
-
-
     waveDebugFmt(fmt_chunk);
 
 
+    // read data cunk
     RIFF_HEAD data_chunk = {"", 0};
 
-    if (fread(&data_chunk, sizeof(RIFF_HEAD), 1, wavFile) < 1) {
+    if (fread(&data_chunk, sizeof(RIFF_HEAD), 1, wave_file) < 1) {
 
         printf ("Can not read the data chunk\n");
         return NULL;
@@ -378,27 +371,23 @@ void* waveOpen(char* fileName, WAVE_INFO* info)
     }
 
 
-
     // I should be able to fill channel buffers with this:
     int dataSize   = data_chunk.cksize;
     int sampleLen  = fmt_chunk.wBitsPerSample / 8;
     int channelNum = fmt_chunk.nChannels;
 
-    printf("%d octets divided in %d octets sample lenght for %d channel\n",
-           dataSize, sampleLen, channelNum);
-
 
     // in memory buffer
-    char*   wavData  = calloc(dataSize, sizeof(char));
-    int     haveRead = fread(wavData, 1, (size_t) dataSize, wavFile);
+    char* wave_data = calloc(dataSize, sizeof(char));
+    int   haveRead  = fread(wave_data, 1, (size_t) dataSize, wave_file);
 
     if (haveRead < dataSize)
-        printf("warning unexpected end of file %d %s\n", haveRead, wavData);
+        printf("warning unexpected end of file %d %s\n", haveRead, wave_data);
     else
         printf("Read file success\n");
 
 
-    fclose(wavFile);
+    fclose(wave_file);
 
     info->nChannels            = fmt_chunk.nChannels;
     info->nSamplesPerSec       = fmt_chunk.nSamplesPerSec;
@@ -407,9 +396,9 @@ void* waveOpen(char* fileName, WAVE_INFO* info)
     info->wBitsPerSample       = fmt_chunk.wBitsPerSample;
     info->wValidBitsPerSample  = fmt_chunk.wValidBitsPerSample;
     info->dwChannelMask        = fmt_chunk.dwChannelMask;
-    info->dataSize             = dataSize;
+    info->dataSize             = haveRead;
 
-    return wavData;
+    return wave_data;
 
 }
 
