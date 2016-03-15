@@ -3,9 +3,9 @@ LIBWAVE
 [![Build Status](https://travis-ci.org/ssbx/libwave.svg?branch=master)](https://travis-ci.org/ssbx/libwave)
 [![Build status](https://ci.appveyor.com/api/projects/status/yifnbg3mimu1fnw6/branch/master?svg=true)](https://ci.appveyor.com/project/ssbx/libwave/branch/master)
 
-Simple Wave format file loader.
+Simple, limited, Wave format file loader. 
 
-This simple example loop over a wav file for 30 seconds:
+This simple example with PortAudio, loop over a wav file for 30 seconds:
 ```c
 #include "wave.h"
 #include "portaudio.h"
