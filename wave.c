@@ -1,5 +1,5 @@
 /*
- * CWAVE Copyright (c) 2016 Sebastien Serre <ssbx@sysmo.io>.
+ * LIBWAVE Copyright (c) 2016 Sebastien Serre <ssbx@sysmo.io>.
  *
  * This file is provided to you under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
@@ -14,7 +14,7 @@
  * under the License.
  */
 
-#include "cwave.h"
+#include "wave.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -80,7 +80,7 @@ typedef struct fmt_chunk_t { // max size 40
 
 } FMT_CHUNK;
 
-void cwaveDebugFmt(FMT_CHUNK fmt_chunk)
+void waveDebugFmt(FMT_CHUNK fmt_chunk)
 {
 
     printf("\n\n");
@@ -236,7 +236,7 @@ const uint16_t WAVE_FORMAT_EXTENSIBLE = 0xFFFE; // Determined by SubFormat
 
 
 
-void* cwaveOpen(char* fileName, CWAVE_INFO* info)
+void* waveOpen(char* fileName, WAVE_INFO* info)
 {
 
     // try to open the file
@@ -358,7 +358,7 @@ void* cwaveOpen(char* fileName, CWAVE_INFO* info)
     uint16_t expectedConfigForStereo = SPEAKER_FRONT_LEFT | SPEAKER_FRONT_RIGHT;
 
 
-    cwaveDebugFmt(fmt_chunk);
+    waveDebugFmt(fmt_chunk);
 
 
     RIFF_HEAD data_chunk = {"", 0};

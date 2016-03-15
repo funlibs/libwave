@@ -1,5 +1,5 @@
 DOXYFILE_ENCODING      = UTF-8
-PROJECT_NAME           = "CWAVE"
+PROJECT_NAME           = "LIBWAVE"
 PROJECT_NUMBER         = 0.1
 PROJECT_BRIEF          = Simple Wave file format reader
 PROJECT_LOGO           =
@@ -83,7 +83,7 @@ WARN_IF_DOC_ERROR      = YES
 WARN_NO_PARAMDOC       = NO
 WARN_FORMAT            = "$file:$line: $text"
 WARN_LOGFILE           =
-INPUT                  = @CMAKE_CURRENT_SOURCE_DIR@/cwave.h
+INPUT                  = @CMAKE_CURRENT_SOURCE_DIR@/wave.h
 INPUT_ENCODING         = UTF-8
 FILE_PATTERNS          =
 RECURSIVE              = NO

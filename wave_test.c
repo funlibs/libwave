@@ -1,5 +1,5 @@
 /*
- * CWAVE Copyright (c) 2016 Sebastien Serre <ssbx@sysmo.io>.
+ * LIBWAVE Copyright (c) 2016 Sebastien Serre <ssbx@sysmo.io>.
  *
  * This file is provided to you under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
@@ -13,7 +13,7 @@
  * the License for the specific language governing permissions and limitations
  * under the License.
  */
-#include "cwave.h"
+#include "wave.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -28,8 +28,8 @@ int main(int argc, char* argv[])
     if (argc < 3) exit(1);
 
 
-    CWAVE_INFO info;
-    void* data = cwaveOpen(argv[1], &info);
+    WAVE_INFO info;
+    void* data = waveOpen(argv[1], &info);
 
 
     int returnStatus;

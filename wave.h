@@ -1,5 +1,5 @@
 /*
- * CWAVE Copyright (c) 2016 Sebastien Serre <ssbx@sysmo.io>.
+ * LIBWAVE Copyright (c) 2016 Sebastien Serre <ssbx@sysmo.io>.
  *
  * This file is provided to you under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
@@ -13,12 +13,12 @@
  * the License for the specific language governing permissions and limitations
  * under the License.
  */
-#ifndef CWAVE_H
-#define CWAVE_H
+#ifndef WAVE_H
+#define WAVE_H
 
 #include <inttypes.h>
 
-typedef struct cwave_info_t {
+typedef struct {
 
     // format
     uint16_t nChannels;
@@ -33,10 +33,10 @@ typedef struct cwave_info_t {
 
     int      dataSize;
 
-} CWAVE_INFO;
+} WAVE_INFO;
 
 
-void* cwaveOpen(char* fileName, CWAVE_INFO* info);
+void* waveOpen(char* fileName, WAVE_INFO* info);
 
 #endif
 
