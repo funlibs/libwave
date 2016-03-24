@@ -239,7 +239,7 @@ void* waveLoad(char* fileName, WAVE_INFO* info)
 {
 
     // try to open the file
-    FILE *wave_file = fopen(fileName, "r");
+    FILE *wave_file = fopen(fileName, "rb");
 
     if (!wave_file) {
 
