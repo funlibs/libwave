@@ -5,6 +5,18 @@ LIBWAVE
 
 Simple, limited, Wave format file loader.
 
+Build
+-----
+LibShake is build with CMake for all platforms.
+
+You can also use the fake configure script provided to set it up on unix:
+```sh
+$ ./configure
+$ make
+```
+
+Example
+-------
 This simple example with PortAudio, loop over a wav file for 30 seconds:
 ```c
 #include "wave.h"

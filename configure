@@ -20,7 +20,6 @@ rm -rf build
 # create Unix Makefiles project
 mkdir build && cd build && cmake ..
 
-echo "\nYou can now run \"make && make test\"\n"
-echo "\nNote that there is no \"install target\""
-echo "\nRun \"make cglm_doc\" to generate the doc in the \"build/doc/\" directory.\n"
+echo "\nYou can now run \"make\"\n"
+echo "\nRun \"make wave_doc\" to generate the doc in the \"build/doc/\" directory.\n"
 
