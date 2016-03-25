@@ -13,11 +13,23 @@
  * the License for the specific language governing permissions and limitations
  * under the License.
  */
+
+/**
+ * @file wave.h
+ */
+
 #ifndef WAVE_H
 #define WAVE_H
 
 #include <inttypes.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif // __cplusplus
+
+/**
+ * @brief Information on a wave file
+ */
 typedef struct {
 
     // format
@@ -36,7 +48,17 @@ typedef struct {
 } WAVE_INFO;
 
 
+/**
+ * @brief Load a wave file in memory
+ * @param fileName The wave file name
+ * @param info Pointer to a WAVE_INFO variable
+ * @return Pointer to the wave data
+ */
 void* waveLoad(char* fileName, WAVE_INFO* info);
+
+#ifdef __cplusplus
+}
+#endif // __cplusplus
 
 #endif
 
