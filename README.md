@@ -24,6 +24,9 @@ $ make wave_doc
 
 Example
 -------
+
+(If you need a mixer example using this library, take a look at [LibShake](https://github.com/ssbx/libshake))
+
 This simple example with PortAudio, loop over a wav file for 30 seconds:
 ```c
 #include "wave.h"
