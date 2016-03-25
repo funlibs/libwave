@@ -15,6 +15,13 @@ $ ./configure
 $ make
 ```
 
+Doc
+---
+Depends on Doxygen.
+```sh
+$ make wave_doc
+```
+
 Example
 -------
 This simple example with PortAudio, loop over a wav file for 30 seconds:
