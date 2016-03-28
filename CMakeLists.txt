@@ -5,7 +5,7 @@ add_definitions (-D_CRT_SECURE_NO_WARNINGS)
 
 include_directories (.)
 
-add_library (wave wave.c wave.h)
+add_library (wave STATIC wave.c wave.h)
 
 add_executable (wave_test
     wave_test.c
@@ -13,6 +13,7 @@ add_executable (wave_test
     wave.h)
 
 target_link_libraries (wave_test wave)
+
 
 # tests
 enable_testing()
@@ -22,6 +23,7 @@ add_test(
 add_test(
     NAME    Fail_6Channels 
     COMMAND wave_test ${CMAKE_CURRENT_SOURCE_DIR}/6_channels_PCM.wav fail)
+
 
 # doc
 find_package (Doxygen)
