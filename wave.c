@@ -260,12 +260,12 @@ void* waveLoad(char* fileName, WAVE_INFO* info)
     // try to read the master header
     MASTER_WAVE_CHUNK wave_chunk;
 
-    if (fread(&wave_chunk, sizeof(MASTER_WAVE_CHUNK), 1, wave_file) < 1) {
-
-        printf("Can not read wave chunk\n");
+    if (fread(&wave_chunk.ckID, sizeof(char), 4, wave_file) < 1) 
         return NULL;
-
-    }
+    if (fread(&wave_chunk.cksize, sizeof(uint32_t), 1, wave_file) < 1) 
+        return NULL;
+    if (fread(&wave_chunk.WAVEID, sizeof(char), 4, wave_file) < 1) 
+        return NULL;
 
 
     // check indianness consistancy
@@ -298,17 +298,14 @@ void* waveLoad(char* fileName, WAVE_INFO* info)
     // read the format chunk and get content lenght
     RIFF_HEAD fmt_chunk_head;
 
-    if (fread(&fmt_chunk_head, sizeof(RIFF_HEAD), 1, wave_file) < 1) {
-
-        printf("Can not read format header chunk\n");
+    if (fread(&fmt_chunk_head.ckID, sizeof(char), 4, wave_file) < 1) 
         return NULL;
-
-    }
-
+    if (fread(&fmt_chunk_head.cksize, sizeof(uint32_t), 1, wave_file) < 1) 
+        return NULL;
 
     if (memcmp(fmt_chunk_head.ckID, "fmt ", 4) != 0) {
 
-        printf("Not an format header\n");
+        printf("Not an format header fmt\n");
         return NULL;
 
     }
@@ -319,15 +316,40 @@ void* waveLoad(char* fileName, WAVE_INFO* info)
     if (fmtSize > 40) return NULL;
 
 
+    printf("begin to read\n");
     // read format options
     FMT_CHUNK fmt_chunk = {0,0,0,0,0,0,0,0,0,{0,""}};
 
-    if (fread(&fmt_chunk, fmtSize, 1, wave_file) < 1) {
-
-        printf("Can not read format chunk\n");
+    if (fread(&fmt_chunk.wFormatTag, sizeof(uint16_t), 1, wave_file) < 1)
+        return NULL;
+    if (fread(&fmt_chunk.nChannels, sizeof(uint16_t), 1, wave_file) < 1)
+        return NULL;
+    if (fread(&fmt_chunk.nSamplesPerSec, sizeof(uint32_t), 1, wave_file) < 1)
+        return NULL;
+    if (fread(&fmt_chunk.nAvgBytesPerSec, sizeof(uint32_t), 1, wave_file) < 1)
+        return NULL;
+    if (fread(&fmt_chunk.nBlockAlign, sizeof(uint16_t), 1, wave_file) < 1)
+        return NULL;
+    if (fread(&fmt_chunk.wBitsPerSample, sizeof(uint16_t), 1, wave_file) < 1)
         return NULL;
 
+    if (fmtSize > 16)
+    {
+        if (fread(&fmt_chunk.cbSize, sizeof(uint16_t), 1, wave_file) < 1)
+            return NULL;
+        if (fmt_chunk.cbSize == 22)
+        {
+            if (fread(&fmt_chunk.wValidBitsPerSample, sizeof(uint16_t), 1, wave_file) < 1)
+                return NULL;
+            if (fread(&fmt_chunk.dwChannelMask, sizeof(uint32_t), 1, wave_file) < 1)
+                return NULL;
+            if (fread(&fmt_chunk.SubFormat.formatCode, sizeof(uint16_t), 1, wave_file) < 1)
+                return NULL;
+            if (fread(&fmt_chunk.SubFormat.fixedString, sizeof(char), 14, wave_file) < 1)
+                return NULL;
+        }
     }
+
 
 
     // only accept PCM
