@@ -267,11 +267,11 @@ static void waveDebugFmt(FMT_CHUNK fmt_chunk)
 /*
  * The standard format codes for waveform data
  */
-static const uint16_t WAVE_FORMAT_PCM        = 0x0001; // PCM
-static const uint16_t WAVE_FORMAT_IEEE_FLOAT = 0x0003; // IEEE float
-static const uint16_t WAVE_FORMAT_ALAW       = 0x0006; // 8-bit ITU-T G.711 A-law
-static const uint16_t WAVE_FORMAT_MULAW      = 0x0007; // 8-bit ITU-T G.711 µ-law
-static const uint16_t WAVE_FORMAT_EXTENSIBLE = 0xFFFE; // Determined by SubFormat
+const uint16_t WAVE_FORMAT_PCM        = 0x0001; // PCM
+const uint16_t WAVE_FORMAT_IEEE_FLOAT = 0x0003; // IEEE float
+const uint16_t WAVE_FORMAT_ALAW       = 0x0006; // 8-bit ITU-T G.711 A-law
+const uint16_t WAVE_FORMAT_MULAW      = 0x0007; // 8-bit ITU-T G.711 µ-law
+const uint16_t WAVE_FORMAT_EXTENSIBLE = 0xFFFE; // Determined by SubFormat
 
 
 /**
