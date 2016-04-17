@@ -5,14 +5,9 @@ add_definitions (-D_CRT_SECURE_NO_WARNINGS)
 
 include_directories (.)
 
-add_library (wave STATIC wave.c wave.h)
-
 add_executable (wave_test
     wave_test.c
-    wave.c
     wave.h)
-
-target_link_libraries (wave_test wave)
 
 
 # tests
