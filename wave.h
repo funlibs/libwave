@@ -35,10 +35,6 @@
 #include <stdint.h>
 #include <inttypes.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif // __cplusplus
-
 /**
  * @brief Information on a wave file
  */
@@ -118,6 +114,45 @@ typedef struct fmt_chunk_t { // max size 40
     GUID        SubFormat;          // GUID, including the data format code
 
 } FMT_CHUNK;
+
+
+/*
+ * See doc_waveMultiChan.pdf for more on this
+ */
+#define SPEAKER_FRONT_LEFT             0x1
+#define SPEAKER_FRONT_RIGHT            0x2
+#define SPEAKER_FRONT_CENTER           0x4
+#define SPEAKER_LOW_FREQUENCY          0x8
+#define SPEAKER_BACK_LEFT              0x10
+#define SPEAKER_BACK_RIGHT             0x20
+#define SPEAKER_FRONT_LEFT_OF_CENTER   0x40
+#define SPEAKER_FRONT_RIGHT_OF_CENTER  0x80
+#define SPEAKER_BACK_CENTER            0x100
+#define SPEAKER_SIDE_LEFT              0x200
+#define SPEAKER_SIDE_RIGHT             0x400
+#define SPEAKER_TOP_CENTER             0x800
+#define SPEAKER_TOP_FRONT_LEFT         0x1000
+#define SPEAKER_TOP_FRONT_CENTER       0x2000
+#define SPEAKER_TOP_FRONT_RIGHT        0x4000
+#define SPEAKER_TOP_BACK_LEFT          0x8000
+#define SPEAKER_TOP_BACK_CENTER        0x10000
+#define SPEAKER_TOP_BACK_RIGHT         0x20000
+#define SPEAKER_RESERVED               0x8000000
+
+
+/*
+ * The standard format codes for waveform data
+ */
+const uint16_t WAVE_FORMAT_PCM        = 0x0001; // PCM
+const uint16_t WAVE_FORMAT_IEEE_FLOAT = 0x0003; // IEEE float
+const uint16_t WAVE_FORMAT_ALAW       = 0x0006; // 8-bit ITU-T G.711 A-law
+const uint16_t WAVE_FORMAT_MULAW      = 0x0007; // 8-bit ITU-T G.711 µ-law
+const uint16_t WAVE_FORMAT_EXTENSIBLE = 0xFFFE; // Determined by SubFormat
+
+
+#ifdef __cplusplus
+extern "C" {
+#endif // __cplusplus
 
 static void waveDebugFmt(FMT_CHUNK fmt_chunk)
 {
@@ -238,40 +273,6 @@ static void waveDebugFmt(FMT_CHUNK fmt_chunk)
  * above) and that the rest of the file contains sound data.
  * This is not a safe assumption.
  */
-
-
-/*
- * See doc_waveMultiChan.pdf for more on this
- */
-#define SPEAKER_FRONT_LEFT             0x1
-#define SPEAKER_FRONT_RIGHT            0x2
-#define SPEAKER_FRONT_CENTER           0x4
-#define SPEAKER_LOW_FREQUENCY          0x8
-#define SPEAKER_BACK_LEFT              0x10
-#define SPEAKER_BACK_RIGHT             0x20
-#define SPEAKER_FRONT_LEFT_OF_CENTER   0x40
-#define SPEAKER_FRONT_RIGHT_OF_CENTER  0x80
-#define SPEAKER_BACK_CENTER            0x100
-#define SPEAKER_SIDE_LEFT              0x200
-#define SPEAKER_SIDE_RIGHT             0x400
-#define SPEAKER_TOP_CENTER             0x800
-#define SPEAKER_TOP_FRONT_LEFT         0x1000
-#define SPEAKER_TOP_FRONT_CENTER       0x2000
-#define SPEAKER_TOP_FRONT_RIGHT        0x4000
-#define SPEAKER_TOP_BACK_LEFT          0x8000
-#define SPEAKER_TOP_BACK_CENTER        0x10000
-#define SPEAKER_TOP_BACK_RIGHT         0x20000
-#define SPEAKER_RESERVED               0x8000000
-
-
-/*
- * The standard format codes for waveform data
- */
-const uint16_t WAVE_FORMAT_PCM        = 0x0001; // PCM
-const uint16_t WAVE_FORMAT_IEEE_FLOAT = 0x0003; // IEEE float
-const uint16_t WAVE_FORMAT_ALAW       = 0x0006; // 8-bit ITU-T G.711 A-law
-const uint16_t WAVE_FORMAT_MULAW      = 0x0007; // 8-bit ITU-T G.711 µ-law
-const uint16_t WAVE_FORMAT_EXTENSIBLE = 0xFFFE; // Determined by SubFormat
 
 
 /**
