@@ -85,7 +85,7 @@ typedef struct master_wave_chunk_t
 typedef struct guid_t {
     uint16_t formatCode;
     char     fixedString[14];
-} GUID;
+} WAVE_GUID;
 
 
 /*
@@ -111,7 +111,7 @@ typedef struct fmt_chunk_t { // max size 40
     uint16_t    cbSize;             // Size of the extension (0 or 22)
     uint16_t    wValidBitsPerSample;// Number of valid bits
     uint32_t    dwChannelMask;      // Speaker position mask
-    GUID        SubFormat;          // GUID, including the data format code
+    WAVE_GUID   SubFormat;          // GUID, including the data format code
 
 } FMT_CHUNK;
 
