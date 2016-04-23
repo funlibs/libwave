@@ -7,12 +7,14 @@ Simple, limited, Wave format file loader.
 
 Build
 -----
-LibShake is build with CMake for all platforms.
+Just include wave.h to your project.
 
-You can also use the fake configure script provided to set it up on unix:
+Tests
+-----
 ```sh
 $ ./configure
 $ make
+$ make test
 ```
 
 Doc
