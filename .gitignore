@@ -1,6 +1,2 @@
 /build
-*.swo
-*.swp
-/.kdev4
-/*.kdev4
 /Makefile
