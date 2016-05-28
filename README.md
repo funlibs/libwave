@@ -1,7 +1,7 @@
 LIBWAVE
 =======
-[![Build Status](https://travis-ci.org/libgame/libwave.svg?branch=master)](https://travis-ci.org/libgame/libwave)
-[![Build status](https://ci.appveyor.com/api/projects/status/9er14t5lks4tymir/branch/master?svg=true)](https://ci.appveyor.com/project/ssbx/libwave-412yy/branch/master)
+[![Build Status](https://travis-ci.org/funlibs/libwave.svg?branch=master)](https://travis-ci.org/funlibs/libwave)
+[![Build status](https://ci.appveyor.com/api/projects/status/n9my1yedvfvvcrv3/branch/master?svg=true)](https://ci.appveyor.com/project/ssbx/libwave-g277r/branch/master)
 
 Simple, limited, Wave format file loader.
 
