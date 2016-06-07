@@ -8,7 +8,7 @@ os:
 
 compiler:
     - gcc
-    - g++
+   #- g++
     - clang
 
 script: 
